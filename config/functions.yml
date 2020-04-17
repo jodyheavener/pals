@@ -1,0 +1,15 @@
+healthCheck:
+  handler: library/functions/server.healthCheck
+  events:
+    - http:
+        path: /__health
+        method: get
+        cors: true
+
+processExternalTwilio:
+  handler: library/functions/external.handleTwilio
+  events:
+    - http:
+        path: twilio
+        method: post
+        cors: true

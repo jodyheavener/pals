@@ -1,0 +1,23 @@
+{
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "welcome": "Bienvenue à Pals! Connectons-nous avec quelqu'un. Nous avons juste quelques questions.",
+  "whatsYourName": [
+    "Quel est votre prénom?",
+    "Comment aimeriez-vous être appelé?",
+    "Qui êtes vous?"
+  ],
+  "seenByYourPal": [
+    "Votre Pal verra cela..",
+    "Ce sera ce que votre Pal verra."
+  ],
+  "greeting": "Salut, %{name}!",
+  "whatLanguages": [
+    "Outre le français, parlez-vous d'autres langues?",
+    "Parlez-vous d'autres langues que le français?"
+  ],
+  "languagesWeSupport": "Nous supportons %{languages}.",
+  "cantHelpYou": "Désolé, nous ne pouvons pas vous connecter pour le moment."
+}

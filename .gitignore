@@ -1,0 +1,9 @@
+node_modules
+jspm_packages
+
+.serverless
+.build
+
+secrets.*.json
+
+yarn-error.log

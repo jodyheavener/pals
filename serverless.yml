@@ -1,0 +1,46 @@
+service: pals
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: pals-serverless-admin
+  region: ca-central-1
+  timeout: 30
+  memorySize: 128
+  stage: ${opt:stage, 'dev'}
+
+  environment:
+    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+    BASE_URL: ${self:custom.secrets.BASE_URL}
+    TWILIO_SID: ${self:custom.secrets.TWILIO_SID}
+    TWILIO_TOKEN: ${self:custom.secrets.TWILIO_TOKEN}
+    TWILIO_NUMBER: ${self:custom.secrets.TWILIO_NUMBER}
+    DB_NAME: ${self:custom.secrets.DB_NAME}
+    DB_USER: ${self:custom.secrets.DB_USER}
+    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
+    DB_HOST: ${self:custom.secrets.DB_HOST}
+    DB_PORT: ${self:custom.secrets.DB_PORT}
+
+  vpc:
+    securityGroupIds:
+      - ${self:custom.secrets.SECURITY_GROUP_ID}
+    subnetIds:
+      - ${self:custom.secrets.SUBNET1_ID}
+      - ${self:custom.secrets.SUBNET2_ID}
+      - ${self:custom.secrets.SUBNET3_ID}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "lambda:*"
+      Resource:
+        - "*"
+
+custom:
+  secrets: ${file(secrets.${self:provider.stage}.json)}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+functions: ${file(config/functions.yml)}
