@@ -90,6 +90,36 @@ function inferLanguage(text: string) {
 }
 
 // @ts-ignore
+function getKeyByValue(object: { [key: string]: any }, value: string) {
+  return Object.keys(object).find(key => object[key] === value);
+}
+
+// @ts-ignore
+function detectLanguages(user, text: string) {
+  // This whole function is a friggen mess
+  // please do not judge me it is very late
+
+  const strippedWords = text.toLowerCase().replace(/\W/g, '');
+  const localedLanguage = locales[user.languages[0]].languages;
+
+  const foundLanguages = Object.values(localedLanguage).filter((language) =>
+    // @ts-ignore
+    strippedWords.includes(language.toLowerCase())
+  );
+
+  const languageKeys = Object.keys(localedLanguage).filter((key) =>
+    foundLanguages.includes(localedLanguage[key])
+  );
+
+  const combinedKeys = user.languages.concat(languageKeys);
+
+  // @ts-ignore
+  return combinedKeys.filter(function (item, pos) {
+    return combinedKeys.indexOf(item) == pos;
+  });
+}
+
+// @ts-ignore
 function getStatusMessage(user) {
   // TODO: Update this with a preference
   // to set the primary language
@@ -99,8 +129,9 @@ function getStatusMessage(user) {
   switch (user.status) {
     case STATUS_TYPES.NEEDS_NAME:
       messages = [
-        getMessage(language, 'welcome'),
+        ['1/2 -', getMessage(language, 'welcome')].join(' '),
         [
+          '2/2 -',
           getMessage(language, 'whatsYourName'),
           getMessage(language, 'seenByYourPal'),
         ].join(' '),
@@ -110,8 +141,11 @@ function getStatusMessage(user) {
       const availableLanguages = Object.values(locales[language].languages);
 
       messages = [
-        getMessage(language, 'greeting', { name: user.name }),
+        ['1/2 -', getMessage(language, 'greeting', { name: user.name })].join(
+          ' '
+        ),
         [
+          '2/2 -',
           getMessage(language, 'whatLanguages'),
           getMessage(language, 'languagesWeSupport', {
             languages: availableLanguages.join(', '),
@@ -163,6 +197,13 @@ export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
         return respond(new HTTPError(400, 'Could not create the user', error));
       }
     } else {
+      if (event.authedUser.status === STATUS_TYPES.CONFIRM_LANGUAGES) {
+        event.authedUser.update({
+          languages: detectLanguages(event.authedUser, event.params.Body),
+          status: STATUS_TYPES.READY,
+        });
+      }
+
       if (event.authedUser.status === STATUS_TYPES.NEEDS_NAME) {
         event.authedUser.update({
           name: event.params.Body,
@@ -170,17 +211,11 @@ export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
         });
       }
 
-      // if (event.authedUser.status === STATUS_TYPES.CONFIRM_LANGUAGES) {
-      //   event.authedUser.update({
-      //     languages: event.authedUser.languages.concat(
-      //       parseAdditionalLanguages(event.params.Body)
-      //     ),
-      //   });
-      // }
-
       // The user is not ready to chat, so let's address that
       if (event.authedUser.status !== STATUS_TYPES.READY) {
         sendMessage(event.authedUser, getStatusMessage(event.authedUser));
+      } else {
+        sendMessage(event.authedUser, 'Ready to go!');
       }
     }
 
