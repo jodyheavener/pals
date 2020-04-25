@@ -11,8 +11,7 @@ export default function Pairing(sequelize, DataTypes) {
   }, {});
 
   Pairing.associate = function(models: { User: (typeof User) }) {
-    Pairing.hasOne(models.User, { as: 'userOne' });
-    Pairing.hasOne(models.User, { as: 'userTwo' });
+    Pairing.hasMany(models.User);
   };
 
   return Pairing;

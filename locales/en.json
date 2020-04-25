@@ -3,7 +3,7 @@
     "en": "English",
     "fr": "French"
   },
-  "welcome": "Welcome to Pals! Let's connect you with someone. We just have a couple questions.",
+  "welcome": "Welcome to Pals! Let's connect you with someone.",
   "whatsYourName": [
     "So, what's your first name?",
     "What would you like to be called?",
@@ -13,14 +13,8 @@
     "Your Pal will see this.",
     "This will be what your Pal sees."
   ],
-  "greeting": "Hi, %{name}!",
-  "whatLanguages": [
-    "Besides English, do you speak any other languages?",
-    "Do you speak any other languages besides English?"
-  ],
-  "languagesWeSupport": "We support %{languages}.",
   "cantHelpYou": "Sorry, we can't connect you right now.",
-  "ready": "You're all ready to go!",
+  "ready": "Hey, %{name}! You're all set.",
   "unpairedCommands": "Here's what you can do:\rPAIR - find a Pal\rLEAVE - delete your account",
   "pairedCommands": "Here's what you can do:\rBYE - leave your Pal forever\rEXIT - return to Pal",
   "connecting": "We're connecting you to a new Pal.",
