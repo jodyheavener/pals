@@ -1,5 +1,5 @@
 const qs = require('qs');
-import database from './database';
+import { connect } from './database';
 import User from '../models/User';
 import { HEV, HCX, HCB } from '../../types/handler';
 
@@ -69,7 +69,7 @@ export async function handleRequest(
   // const userId = originalEvent.requestContext.authorizer.principalId;
 
   try {
-    event.database = await database();
+    event.database = await connect();
   } catch (error) {
     return respond(new HTTPError(500, 'Cannot connect to the database', error));
   }

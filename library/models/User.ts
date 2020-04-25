@@ -1,3 +1,5 @@
+import Pairing from './Pairing';
+
 export const SUPPORTED_LANGUAGES = {
   en: 'en',
   fr: 'fr'
@@ -16,7 +18,7 @@ export const UPDATABLE_ATTRS = ['name', 'phone'];
 
 // @ts-ignore
 export default function User(sequelize, DataTypes) {
-  const user = sequelize.define('user', {
+  const User = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -78,9 +80,9 @@ export default function User(sequelize, DataTypes) {
         return this.getDataValue('verifiedAt') != null;
       },
     },
-  });
+  }, {});
 
-  user.prototype.toJSON = function() {
+  User.prototype.toJSON = function () {
     let attributes: { [key: string]: any } = Object.assign({}, this.get());
 
     for (let a of EXCLUDED_ATTRS) {
@@ -90,5 +92,9 @@ export default function User(sequelize, DataTypes) {
     return attributes;
   }
 
-  return user;
+  User.associate = function (models: { Pairing: (typeof Pairing) }) {
+    User.belongsTo(models.Pairing);
+  };
+
+  return User;
 };

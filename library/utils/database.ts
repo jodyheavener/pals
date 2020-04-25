@@ -1,5 +1,16 @@
+const fs = require('fs');
+const path = require('path');
 import Sequelize from 'sequelize';
-import UserModel from '../models/User';
+
+const db: {
+  connected: boolean;
+  sequelize?: typeof Sequelize;
+  Sequelize?: object;
+  [key: string]: any;
+} = {
+  connected: false,
+  Sequelize,
+};
 
 // @ts-ignore
 const sequelize = new Sequelize(
@@ -13,22 +24,36 @@ const sequelize = new Sequelize(
   }
 );
 
-const User = UserModel(sequelize, Sequelize);
+fs.readdirSync(__dirname + '/../models')
+  .filter((file: string) => {
+    return file.indexOf('.') !== 0 && file.slice(-3) === '.js';
+  })
+  .forEach((file: string) => {
+    const model = sequelize['import'](path.join(__dirname, '/../models', file));
+    db[model.name] = model;
+  });
 
-const Models = { User };
-const connection = {};
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-export default async function database() {
-  // @ts-ignore
-  if (connection.isConnected) {
+db.sequelize = sequelize;
+
+export default db;
+
+export async function connect() {
+  if (db.connected) {
     console.log('=> Using existing connection.');
-    return Models;
+    return db;
   }
 
   await sequelize.sync();
   await sequelize.authenticate();
-  // @ts-ignore
-  connection.isConnected = true;
+
+  db.connected = true;
   console.log('=> Created a new connection.');
-  return Models;
+
+  return db;
 };

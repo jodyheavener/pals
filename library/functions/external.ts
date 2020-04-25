@@ -192,7 +192,7 @@ export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
           phone: event.params.From.replace(/\D/g, ''),
         });
 
-        await sendMessage(event.authedUser, getStatusMessage(event.authedUser));
+        sendMessage(event.authedUser, getStatusMessage(event.authedUser));
       } catch (error) {
         return respond(new HTTPError(400, 'Could not create the user', error));
       }
