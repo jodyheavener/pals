@@ -15,3 +15,5 @@
 - Clean up Typescript! There are lots of `// @ts-ignore`, and `any` types
 - Improve/add `User` column validations
 - Add some sort of throttling for messages
+- Add ability to report Pal
+- Add ability to access menu while waiting for connection

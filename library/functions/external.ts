@@ -1,6 +1,6 @@
 import { handleRequest, HTTPError } from '../utils/server';
 import { HEV, HCX, HCB, HandlerEvent } from '../../types/handler';
-import { STATUS_TYPES } from '../models/User';
+import { STATUS_TYPES, OPERATION_TYPES } from '../models/User';
 
 const fs = require('fs');
 const { resolve } = require('path');
@@ -76,8 +76,8 @@ function getMessage(
 function inferLanguage(text: string) {
   const matchers = {
     english: 'en',
-    french: 'fr'
-  }
+    french: 'fr',
+  };
 
   const detection = lngDetector.detect(text);
   // We don't support all detectable languages, so narrow the results
@@ -91,7 +91,7 @@ function inferLanguage(text: string) {
 
 // @ts-ignore
 function getKeyByValue(object: { [key: string]: any }, value: string) {
-  return Object.keys(object).find(key => object[key] === value);
+  return Object.keys(object).find((key) => object[key] === value);
 }
 
 // @ts-ignore
@@ -121,9 +121,7 @@ function detectLanguages(user, text: string) {
 
 // @ts-ignore
 function getStatusMessage(user) {
-  // TODO: Update this with a preference
-  // to set the primary language
-  const language = user.languages[0];
+  const language = user.primaryLanguage;
   let messages;
 
   switch (user.status) {
@@ -176,6 +174,10 @@ function sendMessage(user, messages: Array<string> | string = []) {
   });
 }
 
+function parsableCommand(body: string, keys: string[] = []): string | undefined {
+  return keys.find((key) => key === body.trim().toUpperCase());
+}
+
 export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
   return handleRequest(ev, cx, cb, async function (
     respond: Function,
@@ -202,6 +204,17 @@ export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
           languages: detectLanguages(event.authedUser, event.params.Body),
           status: STATUS_TYPES.READY,
         });
+
+        sendMessage(event.authedUser, [
+          [
+            '1/2 -',
+            getMessage(event.authedUser.primaryLanguage, 'ready')
+          ].join(' '),
+          [
+            '2/2 -',
+            getMessage(event.authedUser.primaryLanguage, 'unpairedCommands'),
+          ].join(' '),
+        ]);
       }
 
       if (event.authedUser.status === STATUS_TYPES.NEEDS_NAME) {
@@ -211,11 +224,133 @@ export async function handleTwilio(ev: HEV, cx: HCX, cb: HCB) {
         });
       }
 
-      // The user is not ready to chat, so let's address that
+      const existingPairing = await event.authedUser.getPairing();
+
       if (event.authedUser.status !== STATUS_TYPES.READY) {
         sendMessage(event.authedUser, getStatusMessage(event.authedUser));
       } else {
-        sendMessage(event.authedUser, 'Ready to go!');
+        switch (event.authedUser.operation) {
+          case 'unpairedMenu':
+            switch (parsableCommand(event.params.Body, ['PAIR', 'LEAVE'])) {
+              case 'PAIR':
+                // TODO: initiate pairing request
+                // should message with:
+                // sendMessage(
+                //   event.authedUser,
+                //   getMessage(event.authedUser.primaryLanguage, 'connected', {
+                //     name: 'PAIRED NAME',
+                //   })
+                // );
+                event.authedUser.update({
+                  operation: OPERATION_TYPES.CONNECTING,
+                });
+                sendMessage(
+                  event.authedUser,
+                  getMessage(event.authedUser.primaryLanguage, 'connecting')
+                );
+                break;
+              case 'LEAVE':
+                event.authedUser.update({
+                  operation: OPERATION_TYPES.CONFIRMING_DELETION,
+                });
+                sendMessage(
+                  event.authedUser,
+                  getMessage(
+                    event.authedUser.primaryLanguage,
+                    'deleteConfirmation'
+                  )
+                );
+                break;
+              default:
+                sendMessage(
+                  event.authedUser,
+                  getMessage(
+                    event.authedUser.primaryLanguage,
+                    'unpairedCommands'
+                  )
+                );
+                break;
+            }
+            break;
+          case 'pairedMenu':
+            switch (parsableCommand(event.params.Body, ['BYE', 'EXIT'])) {
+              case 'BYE':
+                // TODO: destroy pairing
+                sendMessage(
+                  event.authedUser,
+                  getMessage(event.authedUser.primaryLanguage, 'disconnected')
+                );
+                break;
+              case 'EXIT':
+                event.authedUser.update({
+                  operation: OPERATION_TYPES.CHAT_ACTIVE,
+                });
+                break;
+              default:
+                sendMessage(
+                  event.authedUser,
+                  getMessage(event.authedUser.primaryLanguage, 'pairedCommands')
+                );
+                break;
+            }
+            break;
+          case 'chatActive':
+            if (parsableCommand(event.params.Body, ['> MENU']) === '> MENU') {
+              event.authedUser.update({
+                operation: OPERATION_TYPES.PAIRED_MENU,
+              });
+
+              sendMessage(
+                event.authedUser,
+                getMessage(event.authedUser.primaryLanguage, 'pairedCommands')
+              );
+            } else {
+              // TODO: send the Body to the pairing recipient
+            }
+            break;
+          case 'connecting':
+            sendMessage(
+              event.authedUser,
+              getMessage(event.authedUser.primaryLanguage, 'stillPairing')
+            );
+            break;
+          case 'confirmingDeletion':
+            if (parsableCommand(event.params.Body, ['YES']) === 'YES') {
+              const user = {
+                phone: event.authedUser.phone,
+                primaryLanguage: event.authedUser.primaryLanguage,
+              };
+
+              await event.authedUser.destroy();
+
+              sendMessage(
+                user,
+                getMessage(user.primaryLanguage, 'accountDeleted')
+              );
+            } else {
+              event.authedUser.update({
+                operation: OPERATION_TYPES.UNPAIRED_MENU,
+              });
+
+              sendMessage(event.authedUser, [
+                [
+                  '1/2 -',
+                  getMessage(
+                    event.authedUser.primaryLanguage,
+                    'deleteCancelled'
+                  ),
+                ].join(' '),
+                [
+                  '2/2 -',
+                  getMessage(
+                    event.authedUser.primaryLanguage,
+                    'unpairedCommands'
+                  ),
+                ].join(' '),
+              ]);
+            }
+            break;
+        }
       }
     }
 

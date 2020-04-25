@@ -12,6 +12,14 @@ export const STATUS_TYPES = {
   SUSPENDED: 'suspended'
 };
 
+export const OPERATION_TYPES = {
+  UNPAIRED_MENU: 'unpairedMenu',
+  PAIRED_MENU: 'pairedMenu',
+  CHAT_ACTIVE: 'chatActive',
+  CONNECTING: 'connecting',
+  CONFIRMING_DELETION: 'confirmingDeletion',
+}
+
 export const EXCLUDED_ATTRS = [];
 
 export const UPDATABLE_ATTRS = ['name', 'phone'];
@@ -32,10 +40,13 @@ export default function User(sequelize, DataTypes) {
         isIn: [Object.values(STATUS_TYPES)],
       },
     },
-    mainMenu: {
-      type: DataTypes.BOOLEAN,
+    operation: {
+      type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: true,
+      defaultValue: OPERATION_TYPES.UNPAIRED_MENU,
+      validate: {
+        isIn: [Object.values(OPERATION_TYPES)],
+      },
     },
     languages: {
       type: DataTypes.STRING,
@@ -73,11 +84,13 @@ export default function User(sequelize, DataTypes) {
         },
       },
     },
-    isVerified: {
+    // TODO: Update this with a preference
+    // to set the primary language
+    primaryLanguage: {
       type: DataTypes.VIRTUAL,
-      get(): boolean {
+      get(): string {
         // @ts-ignore
-        return this.getDataValue('verifiedAt') != null;
+        return this.languages[0];
       },
     },
   }, {});

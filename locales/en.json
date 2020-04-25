@@ -19,5 +19,16 @@
     "Do you speak any other languages besides English?"
   ],
   "languagesWeSupport": "We support %{languages}.",
-  "cantHelpYou": "Sorry, we can't connect you right now."
+  "cantHelpYou": "Sorry, we can't connect you right now.",
+  "ready": "You're all ready to go!",
+  "unpairedCommands": "Here's what you can do:\rPAIR - find a Pal\rLEAVE - delete your account",
+  "pairedCommands": "Here's what you can do:\rBYE - leave your Pal forever\rEXIT - return to Pal",
+  "connecting": "We're connecting you to a new Pal.",
+  "connected": "You are now paired with %{name}! Messages you send will go directly to them. Text '> MENU' to activate the menu.",
+  "menuOpen": "Menu active. You'll still receive messages from your Pal, but your messages will not be sent to them for now.",
+  "disconnected": "You've been disconnected from your Pal.",
+  "deleteConfirmation": "Are you sure you want to delete your Pals account? Respond with YES to confirm.",
+  "accountDeleted": "Your account has been deleted! Text us any time.",
+  "deleteCancelled": "Account not deleted.",
+  "stillPairing": "Hang tight, we're still looking for a Pal to connect you with."
 }
