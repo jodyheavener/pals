@@ -6,10 +6,13 @@ healthCheck:
         method: get
         cors: true
 
+resetAll:
+  handler: library/functions/server.resetAll
+
 performPairing:
   handler: library/functions/pairing.pair
   events:
-    - schedule: rate(10 minute)
+    - schedule: rate(10 minutes)
 
 processTwilio:
   handler: library/functions/messaging.process

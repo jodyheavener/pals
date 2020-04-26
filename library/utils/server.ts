@@ -66,8 +66,6 @@ export async function handleRequest(
 
   context.callbackWaitsForEmptyEventLoop = false;
 
-  // const userId = originalEvent.requestContext.authorizer.principalId;
-
   try {
     event.database = await connect();
   } catch (error) {

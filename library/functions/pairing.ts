@@ -3,7 +3,7 @@ import { respond } from '../utils/server';
 import { STATUS_TYPES } from '../models/User';
 import { sendMessage } from '../utils/twilio';
 import { getMessage } from '../utils/messages';
-import db from '../utils/database';
+import db, { connect } from '../utils/database';
 
 const MAX_USERS_PER_PAIRING = 100;
 
@@ -21,7 +21,15 @@ function informPairing(user: typeof db.User, partner: typeof db.User) {
 }
 
 export async function pair(_ev: HEV, _cx: HCX, _cb: HCB) {
-  const unpairedUsers = await db.User.scope('unpaired').findAll({
+  let database: any;
+
+  try {
+    database = await connect();
+  } catch (error) {
+    throw new Error('Cannot connect to the database');
+  }
+
+  const unpairedUsers = await database.User.scope('unpaired').findAll({
     limit: MAX_USERS_PER_PAIRING,
     // @ts-ignore
     order: db.Sequelize.literal('rand()'),
@@ -46,7 +54,7 @@ export async function pair(_ev: HEV, _cx: HCX, _cb: HCB) {
       return;
     }
 
-    const pairing = await db.Pairing.create();
+    const pairing = await database.Pairing.create();
     pairing.setUsers(users);
 
     informPairing(users[0], users[1]);
