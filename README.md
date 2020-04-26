@@ -15,7 +15,7 @@ Setting up:
 
 - Clone this repo: `git clone git@github.com:jodyheavener/pals.git`
 - Install dependencies: `yarn install`
-- Update `secrets.dev.json` for local development, and `secrets.staging.json` for when you want to deploy
+- Remove the `-dist` from both secrets files. Update `secrets.dev.json` for local development, and `secrets.staging.json` for when you want to deploy
 
 Now you can run:
 
