@@ -15,7 +15,7 @@ export function validRequest(event: HandlerEvent) {
     process.env.NODE_ENV === 'dev' ||
     twilio.validateRequest(
       process.env.TWILIO_TOKEN!,
-      event.headers['x-twilio-signature'],
+      event.headers['X-Twilio-Signature'],
       event.url,
       event.params
     )

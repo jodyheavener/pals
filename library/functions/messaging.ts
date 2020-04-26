@@ -225,6 +225,9 @@ export async function process(ev: HEV, cx: HCX, cb: HCB) {
       }
     }
 
-    return respond(null, 200);
+    return respond(null, 200, {
+      // Twilio needs to this content type
+      'Content-Type': 'text/plain',
+    });
   });
 }
