@@ -13,7 +13,8 @@
 **TODO:**
 
 - Clean up Typescript! There are lots of `// @ts-ignore`, and `any` types
-- Improve/add `User` column validations
 - Add some sort of throttling for messages
 - Add ability to report Pal
 - Add ability to access menu while waiting for connection
+- Add ability to infer initial language and set additional languages, pair with someone who speaks your language
+- When you end a chat with your Pal it should never rematch with them

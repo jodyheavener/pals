@@ -58,6 +58,7 @@ export default function User(sequelize, DataTypes) {
         unpaired: {
           where: {
             PairingId: null,
+            status: STATUS_TYPES.CONNECTING,
           },
         },
       },

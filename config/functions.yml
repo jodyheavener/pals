@@ -6,8 +6,13 @@ healthCheck:
         method: get
         cors: true
 
-processExternalTwilio:
-  handler: library/functions/external.handleTwilio
+performPairing:
+  handler: library/functions/pairing.pair
+  events:
+    - schedule: rate(10 minute)
+
+processTwilio:
+  handler: library/functions/messaging.process
   events:
     - http:
         path: twilio

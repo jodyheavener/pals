@@ -17,12 +17,14 @@
   "ready": "Salut, %{name}! Vous êtes prêt.",
   "unpairedCommands": "Voici ce que vous pouvez faire:\rPAIR - trouver un Pal\rLEAVE- supprimer votre compte",
   "pairedCommands": "Voici ce que vous pouvez faire:\rBYE - laisser votre Pal\rEXIT - retournez voir votre Pal",
-  "connecting": "Nous vous connectons à un nouvel Pal.",
+  "connecting": "Nous vous connectons à un nouvel Pal. Cela peut prendre un certain temps selon le nombre de personnes disponibles.",
   "connected": "Vous êtes maintenant jumelé avec %{name}! Les messages que vous envoyez leur seront directement transmis. Textez '> MENU' pour activer le menu.",
   "menuOpen": "Menu actif. Vous recevrez toujours des messages de votre copain, mais vos messages ne leur seront pas envoyés pour l'instant.",
   "disconnected": "Vous avez été déconnecté de votre Pal.",
   "deleteConfirmation": "Voulez-vous vraiment supprimer votre compte Pals? Répondez par YES pour confirmer.",
   "accountDeleted": "Votre compte a été supprimé! Envoyez-nous un SMS à tout moment.",
   "deleteCancelled": "Compte non supprimé.",
-  "stillPairing": "Attendez, nous recherchons toujours un Pal avec qui vous connecter."
+  "stillPairing": "Attendez, nous recherchons toujours un Pal avec qui vous connecter.",
+  "partnerEndedChat": "Votre Pal %{name} a mis fin au conversation.",
+  "youEndedChat": "The conversation has ended."
 }

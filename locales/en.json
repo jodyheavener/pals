@@ -17,12 +17,14 @@
   "ready": "Hey, %{name}! You're all set.",
   "unpairedCommands": "Here's what you can do:\rPAIR - find a Pal\rLEAVE - delete your account",
   "pairedCommands": "Here's what you can do:\rBYE - leave your Pal forever\rEXIT - return to Pal",
-  "connecting": "We're connecting you to a new Pal.",
+  "connecting": "We're connecting you to a new Pal. This could take some time depending on how many people are available.",
   "connected": "You are now paired with %{name}! Messages you send will go directly to them. Text '> MENU' to activate the menu.",
   "menuOpen": "Menu active. You'll still receive messages from your Pal, but your messages will not be sent to them for now.",
   "disconnected": "You've been disconnected from your Pal.",
   "deleteConfirmation": "Are you sure you want to delete your Pals account? Respond with YES to confirm.",
   "accountDeleted": "Your account has been deleted! Text us any time.",
   "deleteCancelled": "Account not deleted.",
-  "stillPairing": "Hang tight, we're still looking for a Pal to connect you with."
+  "stillPairing": "Hang tight, we're still looking for a Pal to connect you with.",
+  "partnerEndedChat": "Your Pal %{name} ended the chat.",
+  "youEndedChat": "The chat has ended."
 }

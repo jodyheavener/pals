@@ -99,7 +99,7 @@ export async function handleRequest(
 }
 
 export function respond(
-  dataOrError: HTTPError | { [key: string]: any } | null,
+  dataOrError: HTTPError | { [key: string]: any } | number,
   statusCode: number = 200,
   headers: { [key: string]: any } = {}
 ): {
@@ -126,6 +126,11 @@ export function respond(
 
     // TODO: Should this print to some other server logs?
     console.log(dataOrError.stack);
+  } else if (typeof dataOrError === 'number') {
+    body.statusCode = dataOrError;
+    // @ts-ignore
+    body.statusMessage = STATUS_MESSAGES[dataOrError];
+    body.data = {};
   } else {
     body.statusCode = statusCode;
     // @ts-ignore
