@@ -6,7 +6,7 @@ provider:
   profile: pals-serverless-admin
   region: ca-central-1
   timeout: 15
-  memorySize: 128
+  memorySize: 256
   stage: ${opt:stage, 'dev'}
 
   environment:
