@@ -57,8 +57,8 @@ async function resetPairing(
   }
 }
 
-export async function process(ev: HEV, cx: HCX, cb: HCB) {
-  return handleRequest(ev, cx, cb, async function (
+export async function process(ev: HEV, cx: HCX, callback: HCB) {
+  return handleRequest(ev, cx, callback, async function (
     respond: Function,
     event: HandlerEvent
   ) {
@@ -177,12 +177,14 @@ export async function process(ev: HEV, cx: HCX, cb: HCB) {
               getMessage(event.authedUser.language, 'pairedCommands')
             );
           } else {
-            const partner = (await pairing.getUsers({
-              where: {
-                // @ts-ignore
-                id: { [db.Sequelize!.Op.ne]: event.authedUser.id },
-              },
-            }))[0];
+            const partner = (
+              await pairing.getUsers({
+                where: {
+                  // @ts-ignore
+                  id: { [db.Sequelize!.Op.ne]: event.authedUser.id },
+                },
+              })
+            )[0];
 
             sendMessage(partner, event.params.Body);
           }
@@ -208,7 +210,10 @@ export async function process(ev: HEV, cx: HCX, cb: HCB) {
 
             await event.authedUser.destroy();
 
-            sendMessage(user, getMessage(user.language, 'accountDeleted'));
+            sendMessage(
+              user,
+              getMessage(user.language, 'accountDeleted')
+            );
           } else {
             event.authedUser.update({
               status: STATUS_TYPES.UNPAIRED_MENU,
@@ -225,7 +230,7 @@ export async function process(ev: HEV, cx: HCX, cb: HCB) {
       }
     }
 
-    return respond(null, 200, {
+    return respond(callback, null, 200, {
       // Twilio needs to this content type
       'Content-Type': 'text/plain',
     });

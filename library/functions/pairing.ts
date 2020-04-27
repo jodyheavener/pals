@@ -20,7 +20,7 @@ function informPairing(user: typeof db.User, partner: typeof db.User) {
   );
 }
 
-export async function pair(_ev: HEV, _cx: HCX, _cb: HCB) {
+export async function pair(_ev: HEV, _cx: HCX, callback: HCB) {
   let database: any;
 
   try {
@@ -61,5 +61,5 @@ export async function pair(_ev: HEV, _cx: HCX, _cb: HCB) {
     informPairing(users[1], users[0]);
   });
 
-  return respond(201);
+  return respond(callback, 201);
 }

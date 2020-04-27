@@ -2,16 +2,16 @@ import { handleRequest, respond } from '../utils/server';
 import { HEV, HCX, HCB, HandlerEvent } from '../../types/handler';
 import { connect } from '../utils/database';
 
-export async function healthCheck(ev: HEV, cx: HCX, cb: HCB) {
-  return handleRequest(ev, cx, cb, async function (
+export async function healthCheck(ev: HEV, cx: HCX, callback: HCB) {
+  return handleRequest(ev, cx, callback, async function (
     respond: Function,
     _event: HandlerEvent
   ) {
-    return respond({ message: 'Connection successful.' });
+    return respond(callback, { message: 'Connection successful.' });
   });
 }
 
-export async function resetAll(_ev: HEV, _cx: HCX, _cb: HCB) {
+export async function resetAll(_ev: HEV, _cx: HCX, callback: HCB) {
   let database: any;
 
   try {
@@ -30,5 +30,5 @@ export async function resetAll(_ev: HEV, _cx: HCX, _cb: HCB) {
     where: {},
   });
 
-  return respond(200);
+  return respond(callback, 200);
 }

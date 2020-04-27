@@ -31,7 +31,7 @@ export class HTTPError extends Error {
 export async function handleRequest(
   originalEvent: HEV,
   context: HCX,
-  _callback: HCB,
+  callback: HCB,
   handler: Function
 ) {
   const event: {
@@ -64,12 +64,15 @@ export async function handleRequest(
     }
   }
 
-  context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = true;
 
   try {
     event.database = await connect();
   } catch (error) {
-    return respond(new HTTPError(500, 'Cannot connect to the database', error));
+    return respond(
+      callback,
+      new HTTPError(500, 'Cannot connect to the database', error)
+    );
   }
 
   const phoneParam = event.params.From;
@@ -88,6 +91,7 @@ export async function handleRequest(
       }
     } catch (error) {
       return respond(
+        callback,
         new HTTPError(500, 'Cannot look up up authenticated user', error)
       );
     }
@@ -97,6 +101,7 @@ export async function handleRequest(
 }
 
 export function respond(
+  callback: HCB,
   dataOrError: HTTPError | { [key: string]: any } | number,
   statusCode: number = 200,
   headers: { [key: string]: any } = {}
@@ -146,5 +151,5 @@ export function respond(
     response.body = JSON.stringify(body);
   }
 
-  return response;
+  return callback(null, response);
 }
