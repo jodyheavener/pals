@@ -21,3 +21,11 @@ processTwilio:
         path: twilio
         method: post
         cors: true
+
+testTwilio:
+  handler: library/functions/test.send
+  events:
+    - http:
+        path: testTwilio
+        method: post
+        cors: true
